@@ -1,4 +1,3 @@
-console.log("JS loaded");
 console.log("Waiting for the fake server to reply...");
 
 /**
@@ -33,23 +32,53 @@ console.log("Waiting for the fake server to reply...");
 // ----- You have to make it work as intended -----
 const serverResponse = new Promise(responseHandler);
 
-serverResponse.then().catch();
+// serverResponse
+// .then((data)=>{
+//   updateDOMWithData(data)
+// })
+// .catch((error)=>{
+//   updateDOMWithError(error)
+// });
+
+serverResponse
+.then(updateDOMWithData)
+  
+.catch(updateDOMWithError)
+
 
 function updateDOMWithData(data) {
-  const html = ``; // build the html for data here
+  const html = `
+  <div class="container">
+    <article class="product">
+      <img src="${data.img}" alt="">
+      <h3>${data.item}</h3>
+      <h3>$ ${data.price}</h3>
+      <h4>Year: ${data.year}</h4>
+    </article>
+  </div>`;
+
+  document.getElementById("new-stuff").innerHTML = html;
+
+  // build the html for data here
 
   // Append the HTML to the DOM here
 }
 
 function updateDOMWithError(error) {
-  const html = ``; // build the html for the error here
-
+  const html = `
+  <div class="container error">
+     <article class="product">
+       <h1>ERROR</h1>
+       <p>${error}</p>
+       <img src="https://vignette.wikia.nocookie.net/battlefordreamisland/images/f/f1/Roboty_book.png/revision/latest?cb=20190908174044" alt="">
+     </article>
+   </div>`; // build the html for the error here
+   document.getElementById("new-stuff").innerHTML = html;
   // Append the HTML to the DOM here
 }
 
 function responseHandler(resolveCb, rejectCb) {
   const serverIsUp = Math.random() > 0.5 ? true : false; //this is a trick to get a 50% chance that the server is broken
-
   const data = {
     item: "MacBook Pro 16",
     price: 2600,
@@ -61,6 +90,8 @@ function responseHandler(resolveCb, rejectCb) {
 
   setTimeout(
     () => {
+      if(serverIsUp) resolveCb(data)
+      else rejectCb(error)
       // Read the "serverIsUp" flag here
       // and handle the promise to dispaly the correct HTML into the DOM here.
     },
